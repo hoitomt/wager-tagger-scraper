@@ -11,3 +11,6 @@ test:
   <<: *defaults
   database: sportsbook_api_test
   min_message: WARNING
+
+production:
+  <<: *defaults
