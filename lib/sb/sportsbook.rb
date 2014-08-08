@@ -80,8 +80,8 @@ EOFX
 	end
 
 	def expired_cookies?
-		cookie_create_time = File.exists?(cookie_path) ? File.ctime(cookie_path) : Time.now - (COOKIE_EXPIRATION + 1.hour)
-		time_since_create = (Time.now - cookie_create_time)/3600
+		return true unless File.exists?(cookie_path)
+		time_since_create = (Time.now - File.ctime(cookie_path))/3600
 		time_since_create.hours > COOKIE_EXPIRATION
 	end
 
