@@ -7,13 +7,13 @@ class SB::Sportsbook
 
 	def self.get_data(config, args={})
 		sb = self.new(config)
-		puts "Cookie File exists #{File.exists?(cookie_path)}"
+		puts "Cookie File exists #{File.exists?(sb.cookie_path)}"
 		if args[:force_login]
 			sb.login
 		else
 			sb.login if sb.expired_cookies?
 		end
-		puts "Cookie File exists #{File.exists?(cookie_path)}"
+		puts "Cookie File exists #{File.exists?(sb.cookie_path)}"
 		sb.get_wager_data(args)
 	end
 
