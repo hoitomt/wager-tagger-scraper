@@ -22,6 +22,7 @@ class SB::Sportsbook
 	end
 
 	def login
+		create_cookie_path
 		cmd = curl_login_cmd
 		puts "SB Login Request: #{cmd}"
 		`#{cmd}`
@@ -75,6 +76,10 @@ EOFX
 
 	def password
 		@config.password
+	end
+
+	def create_cookie_path
+		FileUtils.mkdir_p COOKIE_PATH
 	end
 
 	def cookie_path
