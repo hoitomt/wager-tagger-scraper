@@ -7,10 +7,6 @@ class ApplicationController < ActionController::Base
     render json: home
   end
 
-  def ping
-    render text: "pong"
-  end
-
   def render_response(controller_response)
     render json: {meta: meta, results: controller_response}
   end

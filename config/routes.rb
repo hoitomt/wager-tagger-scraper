@@ -1,6 +1,5 @@
 Rails.application.routes.draw do
   root 'application#root'
-  get 'ping' => 'application#ping'
 
   namespace :api do
     namespace :v1 do
@@ -8,6 +7,7 @@ Rails.application.routes.draw do
         collection do
           get 'recent' => 'tickets#recent'
           get 'all' => 'tickets#all'
+          get 'verify_authentication' => 'tickets#verify_authentication'
         end
       end
 

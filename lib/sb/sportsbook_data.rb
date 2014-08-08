@@ -9,6 +9,11 @@ class SB::SportsbookData
     @pages = []
   end
 
+  def logged_in?
+    logged_in = SB::Sportsbook.get_data(config)
+    return !(logged_in =~ /NOT LOGGED IN/)
+  end
+
   def recent_tickets(start_date=nil)
     start_date ||= Date.today - 30.days
     tickets_for_start_date(start_date)

@@ -5,7 +5,7 @@ class SB::Sportsbook
 
 	attr_accessor :start_date, :page
 
-	def self.get_data(config, args)
+	def self.get_data(config, args={})
 		sb = self.new(config)
 		sb.login if sb.expired_cookies?
 		sb.get_wager_data(args)
