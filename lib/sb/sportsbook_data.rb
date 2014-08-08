@@ -11,6 +11,7 @@ class SB::SportsbookData
 
   def logged_in?
     logged_in = SB::Sportsbook.get_data(config)
+    puts "LOGGED IN #{logged_in}"
     return !(logged_in =~ /NOT LOGGED IN/)
   end
 
