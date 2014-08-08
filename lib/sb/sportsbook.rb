@@ -7,7 +7,11 @@ class SB::Sportsbook
 
 	def self.get_data(config, args={})
 		sb = self.new(config)
-		sb.login if sb.expired_cookies?
+		if args[:force_login]
+			sb.login
+		else
+			sb.login if sb.expired_cookies?
+		end
 		sb.get_wager_data(args)
 	end
 
