@@ -6,6 +6,7 @@ gem 'pg'
 gem 'nokogiri'
 gem 'pry'
 gem 'pry-nav'
+gem 'rack-cors', require: 'rack/cors'
 
 group :development do
   gem 'spring'
