@@ -4,15 +4,6 @@ module Api
       before_filter :restrict_access
       before_filter :verify_sb_credentials
 
-      def index
-        if params[:limit].present? && params[:page].blank?
-          render json: {error: "A limit cannot be specified with out a page"} and return
-        end
-        tickets = Ticket.search(params)
-        @count = tickets.length
-        render_response tickets
-      end
-
       def recent
         sb = SB::SportsbookData.new(ENV['SB_USERNAME'], ENV['SB_PASSWORD'])
         tickets = sb.recent_tickets(params[:start_date])
