@@ -21,11 +21,19 @@ class SB::ParseTickets
 				:amount_to_win => sb_amount_to_win(table),
 				:outcome => sb_outcome(table)
 			)
-			if ticket.save
-				create_line_items(table, ticket)
-				ticket
-			end
+			add_or_update_ticket(ticket)
 		end
+
+	  def add_or_update_ticket(ticket)
+	    if t = Ticket.where(sb_bet_id: ticket.sb_bet_id).first
+	      t.update_attributes(outcome: ticket.outcome)
+	    else
+	      if ticket.save
+					create_line_items(table, ticket)
+					ticket
+				end
+	    end
+	  end
 
 		def sb_bet_id(table)
 			bet_id_match = bet_id_row(table).to_s.match(%r{BET ID=\d*})
