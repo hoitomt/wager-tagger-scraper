@@ -21,12 +21,14 @@ class SB::ParseTickets
 				:amount_to_win => sb_amount_to_win(table),
 				:outcome => sb_outcome(table)
 			)
-			add_or_update_ticket(ticket)
+			add_or_update_ticket(ticket, table)
 		end
 
-	  def add_or_update_ticket(ticket)
-	    if t = Ticket.where(sb_bet_id: ticket.sb_bet_id).first
-	      t.update_attributes(outcome: ticket.outcome)
+	  def add_or_update_ticket(ticket, table)
+	    if new_ticket = Ticket.where(sb_bet_id: ticket.sb_bet_id).first
+	      new_ticket.update_attributes(outcome: ticket.outcome)
+	      update_line_items(table, new_ticket)
+	      new_ticket
 	    else
 	      if ticket.save
 					create_line_items(table, ticket)
@@ -65,6 +67,12 @@ class SB::ParseTickets
 		def sb_outcome(table)
 			match_txt = outcome_dirty(table).children[0].to_s
 			match_txt.to_s.split(' ').last if match_txt
+		end
+
+		# Rather than update line items, just delete and recreate
+		def update_line_items(table, ticket)
+			ticket.ticket_line_items.destroy_all
+			create_line_items(table, ticket)
 		end
 
 		def create_line_items(table, ticket)
