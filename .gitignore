@@ -15,5 +15,6 @@
 /log/*.log
 /tmp
 
+# Vendored Gems
 /vendor/ruby
 /vendor/bundle
