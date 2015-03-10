@@ -7,10 +7,10 @@ Credentials are supplied by setting the environment variables SB_USERNAME and SB
 ##Endpoints
 The following endpoints are available
 
-### /api/v1/tickets/recent[?start_date=mm/dd/yyyy]
+### GET /api/v1/tickets/recent[?start_date=mm/dd/yyyy]
 Retrieve all tickets from the past 30 days. If a start date is provided all tickets from 30 days prior to the start-date will be returned
 
-### /api/v1/tickets/all
+### GET /api/v1/tickets/all
 Retrieve all tickets from all time
 
 ## More Information
