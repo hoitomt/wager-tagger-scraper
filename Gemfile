@@ -9,6 +9,7 @@ gem 'pry'
 gem 'pry-nav'
 gem 'rack-cors', require: 'rack/cors'
 gem 'puma'
+gem 'active_model_serializers', '~> 0.10.0.rc2'
 
 group :development do
   gem 'spring'
