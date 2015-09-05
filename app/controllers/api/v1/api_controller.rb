@@ -1,6 +1,8 @@
 module Api
   module V1
     class ApiController < ApplicationController
+      before_filter :restrict_access
+
       def verify_authentication
         render json: {result: "success"}
       end

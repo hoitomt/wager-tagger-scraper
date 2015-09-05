@@ -11,7 +11,7 @@ module Api
       end
 
       def show
-        render json: Ticket.find(params[:id])
+        render json: Ticket.find(params[:ticket_id])
       end
 
     end

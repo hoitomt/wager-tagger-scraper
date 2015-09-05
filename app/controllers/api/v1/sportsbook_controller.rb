@@ -1,7 +1,6 @@
 module Api
   module V1
     class SportsbookController < ApiController
-      before_filter :restrict_access
       before_filter :verify_sb_credentials
 
       def recent_tickets
