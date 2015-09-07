@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :ticket do
-    sb_bet_id 456
+    sequence(:sb_bet_id)
     wager_date "2015-09-03 17:06:00"
     wager_type "Straight Wager"
     amount_wagered 10.0

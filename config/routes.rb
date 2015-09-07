@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       get 'verify_authentication' => 'api#verify_authentication'
+      get 'finances' => 'finances#index'
 
       resources :tickets, only: [:index, :show], param: :ticket_id do
         member do
@@ -20,8 +21,4 @@ Rails.application.routes.draw do
 
     end
   end
-
-# Migrate from Go
-    # &rest.Route{"GET", "/finances", handlers.GetFinances},
-
 end
