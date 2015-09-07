@@ -6,7 +6,7 @@ class Finance
       finance = self.new(tag, start_date, stop_date)
       next if finance.total == 0
       finance.api_response
-    end
+    end.compact
   end
 
   def initialize(tag, start_date=nil, stop_date=nil)
@@ -60,9 +60,9 @@ class Finance
   end
 
   def ticket_tags
-    scope = TicketTag.includes(:ticket, :tag).where(tag_id: @tag.id)
-    scope = scope.where("wager_date >= ?", @start_date) if @start_date.present?
-    scope = scope.where("wager_date <= ?", @stop_date) if @stop_date.present?
+    scope = TicketTag.includes(:tag).where(tag_id: @tag.id).joins(:ticket)
+    scope = scope.where("tickets.wager_date >= ?", @start_date) if @start_date.present?
+    scope = scope.where("tickets.wager_date <= ?", @stop_date) if @stop_date.present?
     @ticket_tags ||= scope
   end
 end
