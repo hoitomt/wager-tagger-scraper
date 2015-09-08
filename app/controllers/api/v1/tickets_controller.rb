@@ -3,7 +3,7 @@ module Api
     class TicketsController < ApiController
 
       def index
-        scope = Ticket.includes(:ticket_line_items, ticket_tags: [:tag])
+        scope = Ticket.includes(:ticket_line_items, ticket_tags: [:tag]).order('wager_date desc')
         scope = scope.where("wager_date >= ?", params[:start_date]) if params[:start_date]
         scope = scope.where("wager_date <= ?", params[:stop_date]) if params[:stop_date]
         scope
