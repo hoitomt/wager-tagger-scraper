@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe SB::ParseTickets do
-  let(:wager_data){Fixtures.raw_wager_data}
+  let(:wager_data){Fixtures.raw_wager_data_2017}
   let(:table){SB::ParseTickets.result_tables(wager_data).first}
   let(:game){SB::ParseTickets.games(table).first}
   let(:line_item){SB::ParseTickets.create_line_item(game)}

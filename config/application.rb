@@ -22,7 +22,7 @@ module SportsbookApi
     # config.i18n.default_locale = :de
 
     config.SB_LOGIN_URL = 'https://www.sportsbook.ag/cca/customerauthn/pl/login'
-    config.SB_WAGERS_URL = 'https://www.sportsbook.ag/sbk/sportsbook4/www.sportsbook.ag/wagers.cgi'
+    config.SB_WAGERS_URL = "https://www.sportsbook.ag/sbk/sportsbook4/history.sbk"
     config.DEFAULT_PER_PAGE = 20
 
     config.middleware.insert_before 0, "Rack::Cors" do
