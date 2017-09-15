@@ -20,12 +20,12 @@ class Finance
     ticket_tags.each do |ticket_tag|
       pct_stake = ticket_tag.amount / ticket_tag.ticket.amount_wagered
 
-      case ticket_tag.ticket.outcome.downcase
-      when "won"
+      outcome = ticket_tag.ticket.outcome.downcase
+      if outcome =~ /won/
         self.won += (pct_stake * ticket_tag.ticket.amount_to_win) + ticket_tag.amount
-      when "lost"
+      elsif outcome =~ /lost/
         self.lost += ticket_tag.amount
-      when "pending"
+      elsif outcome =~ /pending/
         self.pending += ticket_tag.amount
       end
       self.total += ticket_tag.amount

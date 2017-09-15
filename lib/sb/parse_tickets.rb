@@ -56,7 +56,7 @@ class SB::ParseTickets
 		end
 
 		def sb_amount_to_win(panel)
-			panel.xpath("div[contains(@class,'tkt-details')]//span[contains(@id, 'betPaidAmt')]").text
+			panel.xpath("div[contains(@class,'tkt-details')]//span[contains(@id, 'betWinAmt')]").text
 		end
 
 		def sb_outcome(panel)
