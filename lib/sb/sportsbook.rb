@@ -57,9 +57,8 @@ EOF
 curl -G --cookie #{cookie_path} -L \
  -d "betState=0" \
  -d "searchByDateType=1" \
- -d "searchButton=Search" \
- -d "dateRangeMode=LAST_31_DAYS" \
- -d "customDateRangeDays=7" \
+ -d "dateRangeMode=CUSTOM" \
+ -d "customDateRangeDays=30" \
  -d "customDateRangeDirection=1" \
  -d "page=#{page - 1}" \
  -d "customDateRangeDate=#{start_date}" #{Rails.configuration.SB_WAGERS_URL}

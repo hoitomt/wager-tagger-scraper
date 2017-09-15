@@ -2,81 +2,75 @@ class SB::ParseTickets
 
 	class << self
 		def create_tickets(ndoc)
-			result_tables(ndoc).map do |table|
-				build_ticket(table)
+			result_panels(ndoc).map do |panel|
+				build_ticket(panel)
 			end
 		end
 
-		def result_tables(ndoc)
-			result_tables = ndoc.css('div#wagerDetails > table > tr > td > div > table')
-			result_tables ||= []
+		def result_panels(ndoc)
+			result_panels = ndoc.css('div#searchResult > .panel-primary')
+			result_panels ||= []
 		end
 
-		def build_ticket(table)
+		def build_ticket(panel)
 			ticket = Ticket.new(
-				:sb_bet_id => sb_bet_id(table),
-				:wager_date => sb_wager_date(table),
-				:wager_type => sb_wager_type(table),
-				:amount_wagered => sb_amount_wagered(table),
-				:amount_to_win => sb_amount_to_win(table),
-				:outcome => sb_outcome(table)
+				:sb_bet_id => sb_bet_id(panel),
+				:wager_date => sb_wager_date(panel),
+				:wager_type => sb_wager_type(panel),
+				:amount_wagered => sb_amount_wagered(panel),
+				:amount_to_win => sb_amount_to_win(panel),
+				:outcome => sb_outcome(panel)
 			)
-			add_or_update_ticket(ticket, table)
+			add_or_update_ticket(ticket, panel)
 		end
 
-	  def add_or_update_ticket(ticket, table)
+	  def add_or_update_ticket(ticket, panel)
 	    if new_ticket = Ticket.where(sb_bet_id: ticket.sb_bet_id).first
 	      new_ticket.update_attributes(outcome: ticket.outcome)
-	      update_line_items(table, new_ticket)
+	      update_line_items(panel, new_ticket)
 	      new_ticket
 	    else
 	      if ticket.save
-					create_line_items(table, ticket)
+					create_line_items(panel, ticket)
 					ticket
 				end
 	    end
 	  end
 
-		def sb_bet_id(table)
-			bet_id_match = bet_id_row(table).to_s.match(%r{BET ID=\d*})
-			bet_id_match ? bet_id_match.to_s.split('=')[1].to_i : 0
+		def sb_bet_id(panel)
+			panel.xpath('@id').text
 		end
 
-		def sb_wager_date(table)
-			wd = wager_details_rows(table)[0].css('> td > span')[1]
-			wd = wd.children[0].content
-			wd.gsub!('ET', '')
+		def sb_wager_date(panel)
+			wd = panel.xpath("div[contains(@class,'tkt-details')]//span[contains(@id, 'betDate')]").text
+			wd = wd.gsub(/ET|EST/, '').strip
 			Time.strptime(wd, "%m/%d/%y %H:%M")
 		end
 
-		def sb_wager_type(table)
-			wager_type = wager_details_rows(table)[0].css('> td > span')[0]
-			wager_type.children[0].content
+		def sb_wager_type(panel)
+			panel.xpath("div[contains(@class,'tkt-details')]//span[contains(@id, 'betDesc')]").text
 		end
 
-		def sb_amount_wagered(table)
-			match_txt = wager_amounts(table).to_s.match(%r{bet \d*\W\d*})
-			match_txt.to_s.split(' ')[1] if match_txt
+		def sb_amount_wagered(panel)
+			panel.xpath("div[contains(@class,'tkt-details')]//span[contains(@id, 'betAmt')]").text
 		end
 
-		def sb_amount_to_win(table)
-			match_txt = wager_amounts(table).to_s.match(%r{to win \d*\W\d*})
-			match_txt.to_s.split(' ')[2] if match_txt
+		def sb_amount_to_win(panel)
+			panel.xpath("div[contains(@class,'tkt-details')]//span[contains(@id, 'betPaidAmt')]").text
 		end
 
-		def sb_outcome(table)
-			match_txt = outcome_dirty(table).children[0].to_s
-			match_txt.to_s.split(' ').last if match_txt
+		def sb_outcome(panel)
+			panel.xpath("div[contains(@class,'tkt-details')]//span[contains(@id, 'betResult')]").text
 		end
 
 		# Rather than update line items, just delete and recreate
-		def update_line_items(table, ticket)
+		def update_line_items(panel, ticket)
 			ticket.ticket_line_items.destroy_all
-			create_line_items(table, ticket)
+			create_line_items(panel, ticket)
 		end
 
-		def create_line_items(table, ticket)
-			games(table).each do |game|
+		def create_line_items(panel, ticket)
+			games(panel).each do |game|
 				ticket.ticket_line_items.create(create_line_item(game))
 			end
 		end
@@ -92,102 +86,106 @@ class SB::ParseTickets
 			}
 		end
 
-		def ticket_rows(table)
-			ticket_row = table.css('tr')
-			ticket_row ||= []
-		end
-
-		def bet_id_row(table)
-			ticket_rows(table)[0]
-		end
-
-		def wager_details_rows(table)
-			ticket_rows(table)[1].css('> td > table > tr')
-		end
-
-		def wager_amounts(table)
-			wager_details_rows(table)[1].css('> td > span')[0]
-		end
-
-		def outcome_dirty(table)
-			wager_details_rows(table)[1].css('> td > span')[1]
-		end
-
-		def game_details_row(table)
-			size = ticket_rows(table).size
-			ticket_rows(table)[2..size]
-		end
-
-		def games(table)
-			games = game_details_row(table).css('table')
-			games ||= Nokogiri::HTML ''
-		end
-
-		def teams(game)
-			game_row = game.css('tr').last
-			# p "Teams Game Row #{game_row}"
-			teams = game_row.css('span')[0].try(:children)
-			teams ||= ''
-			teams.to_s.split(line_separator)
-		end
-
-		def away_data(game)
-			# p "Away Data #{game}"
-			data = teams(game).first.gsub(/<(.*?)>/, '').strip
-			data ||= []
-			data.split(' ')
-		end
-
-		def home_data(game)
-			data = teams(game).last.gsub(/<(.*?)>/, '').strip
-			data ||= []
-			data.split(' ')
-		end
-
 		def away_team(game)
-			team = away_data(game)
-			team.pop if team.last =~ /^\d+$/
-			team.join(' ')
+			game.xpath("div//span[contains(@id, 'team1')]").text.try(:strip)
 		end
 
 		def away_score(game)
-			data = away_data(game)
-			data.last =~ /^\d+$/ ? data.last : nil
+			game.xpath("div//span[contains(@id, 'fnScore1')]").text.try(:strip)
 		end
 
 		def home_team(game)
-			team = home_data(game)
-			team.pop if team.last =~ /^\d+$/
-			team.join(' ')
+			game.xpath("div//span[contains(@id, 'team2')]").text.try(:strip)
 		end
 
 		def home_score(game)
-			data = home_data(game)
-			data.last =~ /^\d+$/ ? data.last : nil
-		end
-
-		def time_and_spread(game)
-			time_spread = game.css('td').last.children
-			time_spread = time_spread.css('span').first.children
-			time_spread ||= ''
-			time_spread.to_s.split(line_separator)
+			game.xpath("div//span[contains(@id, 'fnScore2')]").text.try(:strip)
 		end
 
 		def game_date(game)
-			wd = time_and_spread(game).first
-			wd.gsub!('ET', '')
-			wd.gsub!(/\(|\)/, ' ').try(:strip!)
+			wd = game.xpath("div//span[contains(@id, 'eventTime')]").text
+			wd.gsub!(/EST|ET/, '')
+			wd = wd.gsub(/\(|\)/, ' ').try(:strip)
 			Time.strptime(wd, "%m/%d/%y %H:%M")
 		rescue
 			# invalid date
 		end
 
 		def game_spread(game)
-			time_and_spread(game).last.try(:strip)
+			lis = game.xpath("div//span[contains(@id, 'market')]").text
+			lis.try(:strip)
 		end
 
-		def line_separator
-			line_separator = /<br>/
+		def games(panel)
+			games = panel.xpath("div[contains(@class,'tkt-details')]//div[contains(@id, 'betSel')]")
+			games ||= Nokogiri::HTML ''
 		end
+
+		# def teams(game)
+		# 	game_row = game.css('tr').last
+		# 	# p "Teams Game Row #{game_row}"
+		# 	teams = game_row.css('span')[0].try(:children)
+		# 	teams ||= ''
+		# 	teams.to_s.split(line_separator)
+		# end
+
+		# def away_data(game)
+		# 	# p "Away Data #{game}"
+		# 	data = teams(game).first.gsub(/<(.*?)>/, '').strip
+		# 	data ||= []
+		# 	data.split(' ')
+		# end
+
+		# def home_data(game)
+		# 	data = teams(game).last.gsub(/<(.*?)>/, '').strip
+		# 	data ||= []
+		# 	data.split(' ')
+		# end
+
+		# def away_team(game)
+		# 	team = away_data(game)
+		# 	team.pop if team.last =~ /^\d+$/
+		# 	team.join(' ')
+		# end
+
+		# def away_score(game)
+		# 	data = away_data(game)
+		# 	data.last =~ /^\d+$/ ? data.last : nil
+		# end
+
+		# def home_team(game)
+		# 	team = home_data(game)
+		# 	team.pop if team.last =~ /^\d+$/
+		# 	team.join(' ')
+		# end
+
+		# def home_score(game)
+		# 	data = home_data(game)
+		# 	data.last =~ /^\d+$/ ? data.last : nil
+		# end
+
+		# def time_and_spread(game)
+		# 	time_spread = game.css('td').last.children
+		# 	time_spread = time_spread.css('span').first.children
+		# 	time_spread ||= ''
+		# 	time_spread.to_s.split(line_separator)
+		# end
+
+		# def game_date(game)
+		# 	wd = time_and_spread(game).first
+		# 	wd.gsub!('ET', '')
+		# 	wd.gsub!(/\(|\)/, ' ').try(:strip!)
+		# 	Time.strptime(wd, "%m/%d/%y %H:%M")
+		# rescue
+		# 	# invalid date
+		# end
+
+		# def game_spread(game)
+		# 	time_and_spread(game).last.try(:strip)
+		# end
+
+		# def line_separator
+		# 	line_separator = /<br>/
+		# end
 	end
 end
