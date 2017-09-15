@@ -52,14 +52,17 @@ EOF
 
 	# Always query for previous 30 days from specified start date
 	# Page is zero index
+	# Custom Date Range Direction is:
+	# 1 for start date + customDateRangeDays
+	# 2 for start date - customDateRangeDays
 	def curl_wager_cmd(page, start_date)
 		<<-EOFX
-curl -G --cookie #{cookie_path} -L \
+curl --cookie #{cookie_path} -L \
  -d "betState=0" \
  -d "searchByDateType=1" \
  -d "dateRangeMode=CUSTOM" \
  -d "customDateRangeDays=30" \
- -d "customDateRangeDirection=1" \
+ -d "customDateRangeDirection=2" \
  -d "page=#{page - 1}" \
  -d "customDateRangeDate=#{start_date}" #{Rails.configuration.SB_WAGERS_URL}
 EOFX
