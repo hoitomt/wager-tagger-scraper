@@ -10,6 +10,6 @@ namespace :tickets do
   task :get_recent => :environment do
     puts "Get all ticket data"
     sb = SB::SportsbookData.new(ENV['SB_USERNAME'], ENV['SB_PASSWORD'])
-    tickets = sb.recent_tickets(Date.today - 1.day)
+    tickets = sb.recent_tickets(Date.today)
   end
 end
