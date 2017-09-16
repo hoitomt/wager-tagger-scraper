@@ -40,7 +40,7 @@ describe SB::ParseTickets do
     end
 
     it "has the correct amount to win" do
-      expect(SB::ParseTickets.sb_amount_to_win(panel)).to eq('9.55')
+      expect(SB::ParseTickets.sb_amount_to_win(panel)).to eq('4.55')
     end
 
     it "has the correct outcome" do
@@ -68,6 +68,10 @@ describe SB::ParseTickets do
 
     it "has the correct line_item_spread" do
       expect(line_item[:line_item_spread]).to eq('Kansas +7 (-110)')
+    end
+
+    it 'has the correct description' do
+      expect(line_item[:description]).to eq('Kansas +7 (-110)')
     end
   end
 
@@ -108,6 +112,18 @@ describe SB::ParseTickets do
     it "has the correct line_item_spread" do
       expect(line_item[:line_item_spread]).to eq('Houston Texans +900')
     end
+  end
+
+  describe 'funky super bowl line - national anthem' do
+    let(:wager_data){Fixtures.sb_super_bowl_2017}
+    let(:panel){SB::ParseTickets.result_panels(wager_data).first}
+    let(:game){SB::ParseTickets.games(panel).first}
+    let(:line_item){SB::ParseTickets.create_line_item(game)}
+
+    it 'sets the description' do
+      expect(line_item[:description]).to eq "How Long Will it Take Luke Bryan to Sing the US National Anthem (From his first to last note) | Under 127.5 (+120)"
+    end
+
   end
 
 end

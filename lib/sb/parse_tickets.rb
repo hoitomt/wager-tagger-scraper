@@ -82,7 +82,8 @@ class SB::ParseTickets
 				home_team: home_team(game),
 				home_score: home_score(game),
 				line_item_date: game_date(game),
-				line_item_spread: game_spread(game)
+				line_item_spread: game_spread(game),
+				description: description(game)
 			}
 		end
 
@@ -100,6 +101,17 @@ class SB::ParseTickets
 
 		def home_score(game)
 			game.xpath("div//span[contains(@id, 'fnScore2')]").text.try(:strip)
+		end
+
+		def description(game)
+			ed_desc = game.xpath("div//span[contains(@id, 'edDesc')]").text.try(:strip)
+			spread = game_spread(game)
+
+			desc = []
+			desc << ed_desc if ed_desc.length > 0
+			desc << away_team(game) if spread =~ /\// # this appears to correlate
+			desc << spread
+			desc.compact.join(" | ")
 		end
 
 		def game_date(game)
@@ -120,72 +132,5 @@ class SB::ParseTickets
 			games = panel.xpath("div[contains(@class,'tkt-details')]//div[contains(@id, 'betSel')]")
 			games ||= Nokogiri::HTML ''
 		end
-
-		# def teams(game)
-		# 	game_row = game.css('tr').last
-		# 	# p "Teams Game Row #{game_row}"
-		# 	teams = game_row.css('span')[0].try(:children)
-		# 	teams ||= ''
-		# 	teams.to_s.split(line_separator)
-		# end
-
-		# def away_data(game)
-		# 	# p "Away Data #{game}"
-		# 	data = teams(game).first.gsub(/<(.*?)>/, '').strip
-		# 	data ||= []
-		# 	data.split(' ')
-		# end
-
-		# def home_data(game)
-		# 	data = teams(game).last.gsub(/<(.*?)>/, '').strip
-		# 	data ||= []
-		# 	data.split(' ')
-		# end
-
-		# def away_team(game)
-		# 	team = away_data(game)
-		# 	team.pop if team.last =~ /^\d+$/
-		# 	team.join(' ')
-		# end
-
-		# def away_score(game)
-		# 	data = away_data(game)
-		# 	data.last =~ /^\d+$/ ? data.last : nil
-		# end
-
-		# def home_team(game)
-		# 	team = home_data(game)
-		# 	team.pop if team.last =~ /^\d+$/
-		# 	team.join(' ')
-		# end
-
-		# def home_score(game)
-		# 	data = home_data(game)
-		# 	data.last =~ /^\d+$/ ? data.last : nil
-		# end
-
-		# def time_and_spread(game)
-		# 	time_spread = game.css('td').last.children
-		# 	time_spread = time_spread.css('span').first.children
-		# 	time_spread ||= ''
-		# 	time_spread.to_s.split(line_separator)
-		# end
-
-		# def game_date(game)
-		# 	wd = time_and_spread(game).first
-		# 	wd.gsub!('ET', '')
-		# 	wd.gsub!(/\(|\)/, ' ').try(:strip!)
-		# 	Time.strptime(wd, "%m/%d/%y %H:%M")
-		# rescue
-		# 	# invalid date
-		# end
-
-		# def game_spread(game)
-		# 	time_and_spread(game).last.try(:strip)
-		# end
-
-		# def line_separator
-		# 	line_separator = /<br>/
-		# end
 	end
 end
