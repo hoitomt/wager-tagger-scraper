@@ -25,10 +25,10 @@ class SB::ParseTickets
 		end
 
 	  def add_or_update_ticket(ticket, panel)
-	    if new_ticket = Ticket.where(sb_bet_id: ticket.sb_bet_id).first
-	      new_ticket.update_attributes(outcome: ticket.outcome)
-	      update_line_items(panel, new_ticket)
-	      new_ticket
+	    if existing_ticket = Ticket.where(sb_bet_id: ticket.sb_bet_id).first
+	      existing_ticket.update_attributes(outcome: ticket.outcome, amount_to_win: ticket.amount_to_win)
+	      update_line_items(panel, existing_ticket)
+	      existing_ticket
 	    else
 	      if ticket.save
 					create_line_items(panel, ticket)

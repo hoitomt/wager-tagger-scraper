@@ -7,6 +7,10 @@ module Fixtures
     polish File.read("spec/files/sb_response_2017.html")
   end
 
+  def self.raw_wager_data_ad_hock(file_name)
+    polish File.read(file_name)
+  end
+
   def self.sb_super_bowl_2017
     polish File.read("spec/files/sb_super_bowl_2017.html")
   end

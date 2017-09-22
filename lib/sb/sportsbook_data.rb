@@ -31,7 +31,7 @@ class SB::SportsbookData
   end
 
   def tickets_for_start_date(start_date)
-    puts "Retrieve tickets for the 30 days after #{start_date}"
+    puts "Retrieve tickets for the 30 days prior to the #{start_date}"
     all_pages_of_tickets(start_date, 1)
     @pages.map do |ndoc|
       SB::ParseTickets.create_tickets(ndoc)

@@ -19,6 +19,7 @@ describe SB::ParseTickets do
   end
 
   describe "single ticket" do
+    let(:wager_data){Fixtures.raw_wager_data_ad_hock('spec/files/sb_response_adhoc_2017.html')}
     it '#sb_wager_date' do
       expect(SB::ParseTickets.sb_wager_date(panel).to_s).to eq("2017-01-28 17:12:00 -0600")
     end
