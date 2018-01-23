@@ -21,15 +21,15 @@ describe SB::ParseTickets do
   describe "single ticket" do
     let(:wager_data){Fixtures.raw_wager_data_ad_hock('spec/files/sb_response_adhoc_2017.html')}
     it '#sb_wager_date' do
-      expect(SB::ParseTickets.sb_wager_date(panel).to_s).to eq("2017-01-28 17:12:00 -0600")
+      expect(SB::ParseTickets.sb_wager_date(panel).to_s).to eq("2017-09-14 23:53:00 -0500")
     end
 
     it '#game_spread' do
-      expect(SB::ParseTickets.game_spread(panel)).to eq('Kansas +7 (-110)')
+      expect(SB::ParseTickets.game_spread(panel)).to eq('Seattle Seahawks -1000')
     end
 
     it "has the correct bet id" do
-      expect(SB::ParseTickets.sb_bet_id(panel)).to eq('513105807')
+      expect(SB::ParseTickets.sb_bet_id(panel)).to eq('524969644')
     end
 
     it "has the correct wager type" do
@@ -37,11 +37,11 @@ describe SB::ParseTickets do
     end
 
     it "has the correct amount wagered" do
-      expect(SB::ParseTickets.sb_amount_wagered(panel)).to eq('5.00')
+      expect(SB::ParseTickets.sb_amount_wagered(panel)).to eq('20.00')
     end
 
     it "has the correct amount to win" do
-      expect(SB::ParseTickets.sb_amount_to_win(panel)).to eq('4.55')
+      expect(SB::ParseTickets.sb_amount_to_win(panel)).to eq('2.00')
     end
 
     it "has the correct outcome" do
@@ -123,6 +123,19 @@ describe SB::ParseTickets do
 
     it 'sets the description' do
       expect(line_item[:description]).to eq "How Long Will it Take Luke Bryan to Sing the US National Anthem (From his first to last note) | Under 127.5 (+120)"
+    end
+
+  end
+
+  describe '3 ticket line items' do
+    let(:wager_data){Fixtures.sb_response_3_line_items}
+    let(:panel){SB::ParseTickets.result_panels(wager_data).first}
+    let(:line_items){SB::ParseTickets.games(panel).map{|game| SB::ParseTickets.create_line_item(game)}}
+
+    it "create_tickets" do
+      expect {
+        SB::ParseTickets.create_tickets(wager_data)
+      }.to change(TicketLineItem, :count).by(3)
     end
 
   end
