@@ -53,10 +53,8 @@ class SB::SportsbookData
 
   def more_pages?(doc)
     ndoc = polish(doc)
-    pagination_data = ndoc.css('table#pagination > tr img')
-    return false if pagination_data.blank? || pagination_data.length == 0
-    img_src = pagination_data.last.attribute('src').value
-    !!(img_src =~ /next/)
+    pagination_data = ndoc.css('div#betHistoryFooter > a#nextPageButton')
+    pagination_data.present?
   end
 
   def sportsbook

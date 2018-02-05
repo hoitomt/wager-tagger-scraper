@@ -1,0 +1,374 @@
+<div id="main-content" class="col-sm-6 col-sm-pull-4 col-md-7 col-md-pull-3">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
+#my-bets-carousel .carousel-indicators { visibility:hidden; }
+@media (min-width: 768px) and (max-width: 1200px) {
+#my-bets-carousel .carousel-control .glyphicon-chevron-left, #my-bets-carousel .carousel-control .glyphicon-chevron-right, #my-bets-carousel .carousel-control .icon-next, #my-bets-carousel .carousel-control .icon-prev { font-size: 20px; top: 60%; }
+}
+@media (min-width: 1200px) {
+#my-bets-carousel .carousel-control { visibility: hidden; }
+#my-bets-carousel:hover .carousel-control { visibility: visible; }
+}
+@media (max-width: 767px) {
+#my-bets-carousel .carousel-control .glyphicon-chevron-left, #my-bets-carousel .carousel-control .glyphicon-chevron-right, #my-bets-carousel .carousel-control .icon-next, #my-bets-carousel .carousel-control .icon-prev { top: 35%; }
+}
+</style>
+<div id="my-bets-carousel" class="carousel slide" data-ride="carousel" style="margin-top:-15px">
+  <!-- Indicators -->
+  <ol class="carousel-indicators">
+    <li data-target="#my-bets-carousel" data-slide-to="0" class="active"></li>
+    <li data-target="#my-bets-carousel" data-slide-to="1"></li>
+    <li data-target="#my-bets-carousel" data-slide-to="2"></li>
+    <li data-target="#my-bets-carousel" data-slide-to="3"></li>
+  </ol>
+
+  <!-- Wrapper for slides -->
+  <div class="carousel-inner" role="listbox">
+    <!--<div class="item active">
+
+    <a href="/casino/play/american-blackjack-low" class="no-ajaxy" target="_self"><img src="/static/SBK/www.sportsbook.ag/SB_Footer_Blackjack.jpg" alt="BlackJack" class="img-responsive"></a>
+
+    </div>-->
+    <div class="item active"><a href="/info/cashout" class="no-ajaxy" target="_self"><img src="/static/SBK/www.sportsbook.ag/HP-Cashout-MyBets.jpg" alt="MrVegas" class="img-responsive"></a></div>
+    <div class="item"><a href="/casino/play/mr-vegas" class="no-ajaxy" target="_self"><img src="/static/SBK/www.sportsbook.ag/SB_Footer_MrVegas.jpg" alt="MrVegas" class="img-responsive"></a></div>
+    <div class="item"><a href="/casino/play/three-card-poker" class="no-ajaxy" target="_self"><img src="/static/SBK/www.sportsbook.ag/SB_Footer_ThreeCardPoker.jpg" alt="ThreeCardPoker" class="img-responsive"></a></div>
+    <div class="item"><a href="/casino/play/craps" class="no-ajaxy" target="_self"><img src="/static/SBK/www.sportsbook.ag/SB_Footer_Craps.jpg" alt="Craps" class="img-responsive"></a></div>
+  </div>
+  <!-- Controls -->
+  <a class="left carousel-control no-ajaxy" href="#my-bets-carousel" role="button" data-slide="prev">
+    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="right carousel-control no-ajaxy" href="#my-bets-carousel" role="button" data-slide="next">
+    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+    <span class="sr-only">Next</span>
+  </a>
+</div>
+<br>
+
+
+<form id="betHistorySearchForm" class="betHistorySearchForm" action="./history.sbk" method="post" role="form">
+  <input type="hidden" id="page" value="0">
+  <input type="hidden" id="casinoId" value="7000">
+  <div class="row">
+    <div class="form-group col-xs-9 col-md-6">
+      <label for="selBetState" class="control-label">Search for</label>
+      <select name="betState" id="selBetState" class="form-control" onchange="checkPending();">
+        <option value="0" selected="">Pending and Processed</option>
+        <option value="1">Pending</option>
+        <option value="2">Processed</option>
+        <option value="4">Unaccepted Live Betting</option>
+      </select>
+    </div>
+
+    <div class="form-group col-xs-9 col-md-6">
+      <div class="radio">
+          <label>
+            <input class="inputRadioButton" type="radio" name="searchByDateType" value="1" checked="">
+            By Bet Date
+          </label>
+      </div>
+      <div class="radio">
+          <label>
+            <input class="inputRadioButton" type="radio" name="searchByDateType" value="2">
+            By Event Date
+          </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="priorDaysId" class="control-label">Date Range</label>
+    <select name="dateRangeMode" id="priorDaysId" onchange="checkCustomize();" class="form-control">
+
+        <option value="THIS_MONTH">This month</option>
+
+        <option value="LAST_DAY">Last day</option>
+
+        <option value="LAST_3_DAYS">Last 3 days</option>
+
+        <option value="LAST_WEEK">Last week</option>
+
+        <option value="LAST_31_DAYS">Last 31 days</option>
+
+        <option value="PREVIOUS_MONTH">January 2018</option>
+
+        <option value="PREVIOUS_MONTH_2">December 2017</option>
+
+        <option value="PREVIOUS_MONTH_3">November 2017</option>
+
+        <option value="PREVIOUS_MONTH_4">October 2017</option>
+
+        <option value="PREVIOUS_MONTH_5">September 2017</option>
+
+        <option value="PREVIOUS_MONTH_6">August 2017</option>
+
+        <option value="CUSTOM" selected="">Custom</option>
+
+    </select>
+  </div>
+
+  <div id="custFilter" class="row">
+    <div class="form-group col-xs-6 col-md-4">
+      <label for="customDaysId" class="control-label">Display (days)</label>
+      <select name="customDateRangeDays" id="customDaysId" class="form-control">
+
+          <option value="7" selected="">7</option>
+
+          <option value="1">1</option>
+
+          <option value="3">3</option>
+
+          <option value="10">10</option>
+
+          <option value="20">20</option>
+
+          <option value="30">30</option>
+
+      </select>
+    </div>
+
+    <div class="form-group col-xs-6 col-md-4">
+      <div class="radio">
+          <label>
+            <input class="inputRadioButton" type="radio" name="customDateRangeDirection" value="1" checked="">
+            Starting
+          </label>
+      </div>
+      <div class="radio">
+          <label>
+            <input class="inputRadioButton" type="radio" name="customDateRangeDirection" value="2">
+            Ending
+          </label>
+      </div>
+    </div>
+
+    <div class="form-group col-xs-6 col-md-4">
+      <div id="dp" class="input-append date" data-date="04/01/2017" data-date-format="mm/dd/yyyy">
+          <input id="dpValue" class="span2" size="16" name="customDateRangeDate" type="text" value="04/01/2017" readonly="">
+          <span class="add-on"><i class="glyphicon glyphicon-calendar"></i></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <input id="betHistorySearchButton" type="submit" value="Search / Refresh" name="betHistorySearchButton" class="btn btn-default searchBetHistory">
+  </div>
+
+</form>
+
+
+<div id="searchResult">
+
+
+    <div class="panel panel-primary processedWon" id="517286438" data-ate="bet_">
+
+      <div class="panel-heading">
+          <span class="tkt-betHeader">
+          <span class="betIdCounter">1.</span>
+          <span class="betId"> Bet#: 517286438</span>
+
+        </span>
+
+
+      </div>
+      <div class="tkt-details">
+          <div class="clearfix tkt-bettype">
+            <span id="betDesc">Straight Wager</span>
+          <span id="betDate" class="pull-right">
+            <!-- Hack: betDate is in EDT but timezone says PDT.
+              Have to build a new date object with correct timezone. -->
+
+
+
+            04/01/17 17:57 EDT
+          </span>
+        </div>
+          <div class="clearfix">
+            <span>Bet $ <span id="betAmt">5.00</span>
+                      to win $ <span id="betWinAmt">4.55</span>
+
+
+
+                            (paid $ <span id="betPaidAmt">9.55</span>)
+
+
+          </span>
+            <span class="pull-right"><b>Result: <span id="betResult">Wager Won</span></b></span>
+          </div>
+
+
+
+            <div id="betSel_1" class="row">
+
+
+
+
+              <div class="col-xs-12">
+                <span class="tkt-selheader">
+
+
+
+
+
+
+
+                        <span id="team1">Oregon</span><span id="fnScore1"> 76</span> vs <span id="team2">North Carolina</span><span id="fnScore2"> 77</span>
+
+
+
+
+              </span>
+              <span id="eventTime" class="pull-right">
+                04/01/17 21:05 EDT
+              </span>
+            </div>
+            <div class="col-xs-12">
+              <span id="market">
+
+                  Oregon
+
+
+
+                +4.5 (-110)
+
+              </span>
+
+
+            </div>
+          </div>
+
+      </div>
+    </div>
+
+
+    <div class="panel panel-primary processedWon" id="517286437" data-ate="bet_1">
+
+      <div class="panel-heading">
+          <span class="tkt-betHeader">
+          <span class="betIdCounter">2.</span>
+          <span class="betId"> Bet#: 517286437</span>
+
+        </span>
+
+
+      </div>
+      <div class="tkt-details">
+          <div class="clearfix tkt-bettype">
+            <span id="betDesc">Straight Wager</span>
+          <span id="betDate" class="pull-right">
+            <!-- Hack: betDate is in EDT but timezone says PDT.
+              Have to build a new date object with correct timezone. -->
+
+
+
+            04/01/17 17:57 EDT
+          </span>
+        </div>
+          <div class="clearfix">
+            <span>Bet $ <span id="betAmt">5.00</span>
+                      to win $ <span id="betWinAmt">4.55</span>
+
+
+
+                            (paid $ <span id="betPaidAmt">9.55</span>)
+
+
+          </span>
+            <span class="pull-right"><b>Result: <span id="betResult">Wager Won</span></b></span>
+          </div>
+
+
+
+            <div id="betSel_1" class="row">
+
+
+
+
+              <div class="col-xs-12">
+                <span class="tkt-selheader">
+
+
+
+
+
+
+
+                        <span id="team1">South Carolina</span><span id="fnScore1"> 73</span> vs <span id="team2">Gonzaga</span><span id="fnScore2"> 77</span>
+
+
+
+
+              </span>
+              <span id="eventTime" class="pull-right">
+                04/01/17 18:05 EDT
+              </span>
+            </div>
+            <div class="col-xs-12">
+              <span id="market">
+
+                  South Carolina
+
+
+
+                +6.5 (-110)
+
+              </span>
+
+
+            </div>
+          </div>
+
+      </div>
+    </div>
+
+
+</div>
+
+<div id="betHistoryFooter" class="clearfix">
+
+  <a id="toTopPage" class="toTopPage" href="#">Back to Top</a>
+</div>
+
+<script type="text/javascript">
+  $(function() {
+    $('#dp').datepicker({
+      autoclose: true
+    });
+    checkCustomize();
+  });
+
+  ga('send', 'pageview', 'bethistory');
+</script>
+
+
+
+
+
+
+
+
+</div>
